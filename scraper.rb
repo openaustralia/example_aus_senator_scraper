@@ -1,13 +1,23 @@
-# This is a template for a Ruby scraper on Morph (https://morph.io)
-# including some code snippets below that you should find helpful
+require 'scraperwiki'
+require 'mechanize'
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
+agent = Mechanize.new
+
+url = "https://morph.io/documentation/examples/australian_members_of_parliament"
+
+# Read in a page
+page = agent.get(url)
+
+page.search('.search-filter-results li').each do |li|
+  record = {
+    name: li.at('.title').inner_text.strip,
+    url: li.at('.title a')["href"],
+    member_for: li.search('dl dd')[0].inner_text,
+    party: li.search('dl dd')[1].inner_text
+  }
+  p record
+end
+
 #
 # # Find somehing on the page using css selectors
 # p page.at('div.content')
